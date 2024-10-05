@@ -1,0 +1,15 @@
+/* Custom styles for hiding scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* Hide scrollbar for Internet Explorer and Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+@font-face {
+  font-family: 'CustomFont';
+  src: url('./assets/Urbanist-VariableFont_wght.ttf') format('ttf'); /* Modern browsers */
+  font-weight: normal;
+  font-style: normal;
+}

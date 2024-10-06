@@ -4,50 +4,6 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"; // Import Syntax Highlighter
 import { materialLight } from "react-syntax-highlighter/dist/esm/styles/prism"; // You can change the style as needed
 
-// Custom CSS styles for the markdown rendering
-const markdownStyles = `
-  .markdown-body {
-    padding: 16px; /* Add some padding */
-    border-radius: 8px; /* Round the corners */
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse; /* Remove gaps between table borders */
-    margin: 16px 0; /* Add some margin */
-    border: 1px solid #fff; /* Add border to the table */
-    border-radius: 8px; /* Round the table corners */
-    overflow: hidden; /* Ensure borders are rounded */
-  }
-
-  th, td {
-    border: 1px solid #fff; /* Add border to table cells */
-    padding: 8px; /* Add padding inside cells */
-    text-align: left; /* Align text to the left */
-  }
-
-  th {
-    font-weight: bold; /* Bold text for headers */
-  }
-
-  tr:nth-child(even) {
-  }
-
-  pre {
-    background-color: #0B192C;
-    // padding: 10px;
-    // opacity:5%;
-    padding: 12px; /* Add padding */
-    border-radius: 8px; /* Round corners */
-    overflow-x: auto; /* Enable horizontal scrolling */
-  }
-
-  code {
-    // opacity:100%;
-    font-family: 'Courier New', monospace; /* Use a monospace font for code */
-  }
-`;
-
 const ChatbotResponse = ({ input }) => {
   const [markdown, setMarkdown] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -99,7 +55,6 @@ const ChatbotResponse = ({ input }) => {
         <p className="text-white font-semibold">{errorMessage}</p>
       ) : (
         <>
-          <style>{markdownStyles}</style> {/* Inject custom styles */}
           <ReactMarkdown
             children={markdown}
             remarkPlugins={[remarkGfm]}

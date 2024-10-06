@@ -81,7 +81,7 @@ const Speech = () => {
 
       <div className="flex items-center w-full max-w-2xl">
         <input
-          className="mt-1 rounded-lg text-white bg-gray-700 p-2 border-none outline-none flex-grow"
+          className="mt-1 rounded-lg text-white bg-gray-700 p-2 border-none outline-none flex-grow text-right"
           value={editableTranscript}
           onChange={(e) => setEditableTranscript(e.target.value)}
           onKeyPress={(e) => {

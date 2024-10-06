@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "./components/Header";
-import Footer from "./components/Footer";
 import Speech from "./components/Speech";
+import NewsletterForm from "./components/NewsletterForm";
 import "./App.css"
 
 const SignInPage = () => {
@@ -16,7 +16,7 @@ const SignInPage = () => {
       </div>
       
       {/* Footer section */}
-      <Footer className="fixed bottom-0 left-0 w-full z-10" />
+      <NewsletterForm className="fixed bottom-0 left-0 w-full z-10" />
     </main>
   );
 };

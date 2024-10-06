@@ -13,3 +13,39 @@
   font-weight: normal;
   font-style: normal;
 }
+
+
+  .markdown-body {
+    padding: 16px; /* Add some padding */
+    border-radius: 8px; /* Round the corners */
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse; /* Remove gaps between table borders */
+    margin: 16px 0; /* Add some margin */
+    border: 1px solid #fff; /* Add border to the table */
+    border-radius: 8px; /* Round the table corners */
+    overflow: hidden; /* Ensure borders are rounded */
+  }
+
+  th, td {
+    border: 1px solid #fff; /* Add border to table cells */
+    padding: 8px; /* Add padding inside cells */
+    text-align: left; /* Align text to the left */
+  }
+
+  th {
+    font-weight: bold; /* Bold text for headers */
+  }
+
+  pre {
+    background-color: #0B192C;
+    padding: 12px; /* Add padding */
+    border-radius: 8px; /* Round corners */
+    overflow-x: auto; /* Enable horizontal scrolling */
+  }
+
+  code {
+  font-family: "Courier New", monospace; /* Use a monospace font for code */
+}

@@ -18,7 +18,7 @@ const ChatbotResponse = ({ input }) => {
 
       try {
         const response = await fetch(
-          "http://server-in-railway-production.up.railway.app/endpoint",
+          "https://server-in-railway-production.up.railway.app/endpoint",
           {
             method: "POST",
             headers: {

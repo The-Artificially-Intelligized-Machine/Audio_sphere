@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"; // Import Syntax Highlighter
-import { materialLight } from "react-syntax-highlighter/dist/esm/styles/prism"; // You can change the style as needed
+import { useState, useEffect } from "react";
+// import ReactMarkdown from "react-markdown";
+// import remarkGfm from "remark-gfm";
+// import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"; // Import Syntax Highlighter
+// import { materialLight } from "react-syntax-highlighter/dist/esm/styles/prism"; // You can change the style as needed
+
 
 const ChatbotResponse = ({ input }) => {
-  const [markdown, setMarkdown] = useState("");
+  const [responseData, setResponseData] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
   const timeoutDuration = 5000; // Timeout duration in milliseconds (5 seconds, adjustable)
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // Start loading
       const controller = new AbortController(); // To control fetch timeout
       const timeout = setTimeout(() => {
         controller.abort(); // Aborts the fetch request after the specified timeout
         setErrorMessage("Hi, I am Azmath. I am unfortunately unavailable.");
+        setLoading(false); // Stop loading
       }, timeoutDuration);
 
       try {
@@ -33,13 +37,15 @@ const ChatbotResponse = ({ input }) => {
         if (!response.ok) throw new Error("Failed to fetch data");
 
         const data = await response.json();
-        setMarkdown(data.content || ""); // Display content if available, otherwise empty
+        setResponseData(JSON.parse(data.response)); // Set the response data
       } catch (error) {
         if (error.name === "AbortError") {
           setErrorMessage("Hi, I am Azmath. I am unfortunately unavailable.");
         } else {
           setErrorMessage("Error fetching data.");
         }
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
 
@@ -51,35 +57,74 @@ const ChatbotResponse = ({ input }) => {
 
   return (
     <div className="markdown-body rounded-lg overflow-auto">
-      {errorMessage ? (
+      {loading ? (
+        <div className="loading">Loading...</div>
+      ) : errorMessage ? (
         <p className="text-white font-semibold">{errorMessage}</p>
       ) : (
-        <>
-          <ReactMarkdown
-            children={markdown}
-            remarkPlugins={[remarkGfm]}
-            components={{
-              code({ node, inline, className, children, ...props }) {
-                const match = /language-(\w+)/.exec(className || "");
-                return !inline && match ? (
-                  <SyntaxHighlighter
-                    style={materialLight}
-                    language={match[1]}
-                    PreTag="div"
-                    {...props}
-                  >
-                    {String(children).replace(/\n$/, "")}
-                  </SyntaxHighlighter>
-                ) : (
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
-                );
-              },
-            }}
-            className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none"
-          />
-        </>
+        responseData && (
+          <div>
+            {responseData.TASK.length > 0 && (
+              <div>
+                <h3 className='font-semibold'>Tasks</h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {responseData.TASK.map((task, index) => (
+                      <tr key={index}>
+                        <td>{task.description}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {responseData.REMINDER.length > 0 && (
+              <div>
+                <h3 className='font-semibold'>Reminders</h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {responseData.REMINDER.map((reminder, index) => (
+                      <tr key={index}>
+                        <td>{reminder.time}</td>
+                        <td>{reminder.description}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {responseData.NOTE.length > 0 && (
+              <div>
+                <h3 className='font-semibold'>Notes</h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {responseData.NOTE.map((note, index) => (
+                      <tr key={index}>
+                        <td>{note.description}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )
       )}
     </div>
   );

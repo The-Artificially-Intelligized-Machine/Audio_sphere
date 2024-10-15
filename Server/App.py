@@ -9,10 +9,10 @@ app = Flask(__name__)
 CORS(app)
 
 # Initialize models
-GROQ_API_KEY = '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'
+GROQ_API_KEY = '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'
 chat = ChatGroq(
     temperature=0,
-    model_name="mixtral-8x7b-32768",
+    model_name="llama3-8b-8192",
     groq_api_key=GROQ_API_KEY)
 
 # Initialize variables
@@ -41,9 +41,6 @@ Ext_todo = f"""
         1. The provided text is a natural language transcription at time {curr_time}. This is for your context awareness.
         2. Extract To-Do tasks, reminders, and notes from the input.
         3. Format the result as JSON, with separate categories for TASK, REMINDER, and NOTE.
-        Example Input: "I have a meeting with John at 3pm today about the project status for half an hour.
-                        Remind me to feed my dog at 1pm and to pick up my son from school at 3 pm and
-                        attend the meeting with my boss at 7pm."
         Example Output: JSON only.
         If no input is provided, or if there's a problem, return 'None' for all categories.
         You are permitted to only return JSON or 'None'. Do not add anything else at any cost.
@@ -55,7 +52,10 @@ Ext_todo = f"""
 def handle_request():
     try:
         data = request.json
-        input_text = data.get('input_text', '')
+        print(data['message'])
+        input_text = data['message']
+        if not input_text:
+            return jsonify({"error": "Please provide input_text in the request body."}), 400
 
         # Call the LLM function with the provided input
         response = llm(Ext_todo, input_text)

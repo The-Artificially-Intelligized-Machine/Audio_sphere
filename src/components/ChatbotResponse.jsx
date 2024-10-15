@@ -1,131 +1,121 @@
 import { useState, useEffect } from "react";
-// import ReactMarkdown from "react-markdown";
-// import remarkGfm from "remark-gfm";
-// import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"; // Import Syntax Highlighter
-// import { materialLight } from "react-syntax-highlighter/dist/esm/styles/prism"; // You can change the style as needed
-
 
 const ChatbotResponse = ({ input }) => {
   const [responseData, setResponseData] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
-  const timeoutDuration = 5000; // Timeout duration in milliseconds (5 seconds, adjustable)
+  const [loading, setLoading] = useState(false);
+  const timeoutDuration = 5000;
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // Start loading
-      const controller = new AbortController(); // To control fetch timeout
+      setLoading(true);
+      const controller = new AbortController();
       const timeout = setTimeout(() => {
-        controller.abort(); // Aborts the fetch request after the specified timeout
+        controller.abort();
         setErrorMessage("Hi, I am Azmath. I am unfortunately unavailable.");
-        setLoading(false); // Stop loading
+        setLoading(false);
       }, timeoutDuration);
 
       try {
         const response = await fetch("http://127.0.0.1:5000/endpoint", {
-          // Flask server running on port 5000
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ message: input }), // Send input in the request body
+          body: JSON.stringify({ message: input }),
           signal: controller.signal,
         });
 
-        clearTimeout(timeout); // Clear the timeout if the fetch is successful
+        clearTimeout(timeout);
 
         if (!response.ok) throw new Error("Failed to fetch data");
 
         const data = await response.json();
-        setResponseData(JSON.parse(data.response)); // Set the response data
+        console.log("Data", data.response);
+        setResponseData(JSON.parse(data.response));
       } catch (error) {
         if (error.name === "AbortError") {
           setErrorMessage("Hi, I am Azmath. I am unfortunately unavailable.");
         } else {
+          console.error("Error:", error);
           setErrorMessage("Error fetching data.");
         }
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
 
     if (input) {
-      // Only fetch if input is provided
       fetchData();
     }
-  }, [input, timeoutDuration]); // Add input as a dependency
+  }, [input, timeoutDuration]);
+
+  console.log("Response Data", JSON.stringify(responseData));
 
   return (
-    <div className="markdown-body rounded-lg overflow-auto">
+    <div className="markdown-body rounded-lg overflow-auto text-white">
       {loading ? (
         <div className="loading">Loading...</div>
       ) : errorMessage ? (
-        <p className="text-white font-semibold">{errorMessage}</p>
-      ) : (
-        responseData && (
-          <div>
-            {responseData.TASK.length > 0 && (
-              <div>
-                <h3 className='font-semibold'>Tasks</h3>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Description</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {responseData.TASK.map((task, index) => (
-                      <tr key={index}>
-                        <td>{task.description}</td>
-                      </tr>
+        <p className="font-semibold">{errorMessage}</p>
+      ) : responseData ? (
+        <div>
+          {responseData.TASK && responseData.TASK.length > 0 && (
+            <pre className="bg-gray-800 p-4 rounded-lg mb-4">
+              <h3 className="font-semibold mb-2">Tasks</h3>
+              <table className="w-full border-collapse border border-gray-300">
+                <thead>
+                  <tr>
+                    {Object.keys(responseData.TASK[0]).map((key) => (
+                      <th key={key} className="border border-gray-300 p-2">{key}</th>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            {responseData.REMINDER.length > 0 && (
-              <div>
-                <h3 className='font-semibold'>Reminders</h3>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Time</th>
-                      <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {responseData.TASK.map((task, index) => (
+                    <tr key={index}>
+                      {Object.values(task).map((value, idx) => (
+                        <td key={idx} className="border border-gray-300 p-2">{value}</td>
+                      ))}
                     </tr>
-                  </thead>
-                  <tbody>
-                    {responseData.REMINDER.map((reminder, index) => (
-                      <tr key={index}>
-                        <td>{reminder.time}</td>
-                        <td>{reminder.description}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            {responseData.NOTE.length > 0 && (
-              <div>
-                <h3 className='font-semibold'>Notes</h3>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Description</th>
+                  ))}
+                </tbody>
+              </table>
+            </pre>
+          )}
+          {responseData.REMINDER && responseData.REMINDER.length > 0 && (
+            <pre className="bg-gray-800 p-4 rounded-lg mb-4">
+              <h3 className="font-semibold mb-2">Reminders</h3>
+              <table className="w-full border-collapse border border-gray-300">
+                <thead>
+                  <tr>
+                    <th className="border border-gray-300 p-2">Time</th>
+                    <th className="border border-gray-300 p-2">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {responseData.REMINDER.map((reminder, index) => (
+                    <tr key={index}>
+                      <td className="border border-gray-300 p-2">{reminder.time}</td>
+                      <td className="border border-gray-300 p-2">{reminder.description}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {responseData.NOTE.map((note, index) => (
-                      <tr key={index}>
-                        <td>{note.description}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )
-      )}
+                  ))}
+                </tbody>
+              </table>
+            </pre>
+          )}
+          {responseData.NOTE && responseData.NOTE.length > 0 && (
+            <pre className="bg-gray-800 p-4 rounded-lg mb-4">
+              <h3 className="font-semibold mb-2">Notes</h3>
+              <ol className="list-decimal list-inside">
+                {responseData.NOTE.map((note, index) => (
+                  <li key={index} className="mb-2">{note.description}</li>
+                ))}
+              </ol>
+            </pre>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 };
